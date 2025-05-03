@@ -1,6 +1,5 @@
 package org.example.ssmtest;
 
-import org.example.ssmtest.model.entity.Student;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
