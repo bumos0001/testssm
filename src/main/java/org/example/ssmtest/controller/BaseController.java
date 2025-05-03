@@ -16,7 +16,21 @@ public class BaseController {
 
     @GetMapping("hello")
     public String hello(){
-        Student byId = studentRepository.getById(1);
-        return "hello, " + byId.getName() + "!";
+        return "hello, andy!";
+    }
+
+    @GetMapping("goodMorning")
+    public String goodMorning(){
+        return "goodMorning, andy!";
+    }
+
+    @GetMapping("goodAfternoon")
+    public String goodAfternoon(){
+        return "goodAfternoon, andy!";
+    }
+
+    @GetMapping("goodEvening")
+    public String goodEvening(){
+        return "goodEvening, andy!";
     }
 }
