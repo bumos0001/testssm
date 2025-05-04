@@ -1,50 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- 定義 Maven 的 POM 檔案格式與命名空間 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- POM 模型版本 -->
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.example</groupId>
-    <artifactId>ssmtest</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>ssmtest</name>
-    <description>ssmtest</description>
+
+    <!-- 專案的基本資訊 -->
+    <groupId>org.example</groupId>             <!-- 組織或公司名稱 -->
+    <artifactId>ssmtest</artifactId>           <!-- 專案名稱 -->
+    <version>0.0.1-SNAPSHOT</version>          <!-- 開發中的版本號 -->
+    <name>ssmtest</name>                       <!-- 顯示用名稱 -->
+    <description>ssmtest</description>         <!-- 描述說明 -->
+
+    <!-- 定義一些通用屬性 -->
     <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>2.6.13</spring-boot.version>
+        <java.version>1.8</java.version>                               <!-- 使用 Java 8 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>     <!-- 原始碼編碼 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> <!-- 報表輸出編碼 -->
+        <spring-boot.version>2.6.13</spring-boot.version>             <!-- Spring Boot 版本 -->
     </properties>
+
+    <!-- 專案使用到的所有依賴 -->
     <dependencies>
+        <!-- Spring Boot Web 模組，提供 REST API、內建 Tomcat 等 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- 開發工具，支援熱部署等功能（僅於開發時啟用） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- Spring AOP 切面程式設計功能 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- Lombok：簡化 Java 程式碼，支援自動產生 getter/setter 等 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <optional>true</optional> <!-- 只在開發工具中使用，避免包進正式環境 -->
         </dependency>
+
+        <!-- 單元測試框架，包含 JUnit, AssertJ, MockMvc 等 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
-<!--        </dependency>-->
+
+        <!-- Spring Data JPA：ORM 映射與資料存取層 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- MySQL 資料庫驅動程式（執行時才需要） -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
+
+    <!-- 統一管理 Spring Boot 相依套件的版本 -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -52,36 +80,43 @@
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
-                <scope>import</scope>
+                <scope>import</scope> <!-- 導入 BOM（Bill of Materials）管理所有版本 -->
             </dependency>
         </dependencies>
     </dependencyManagement>
 
+    <!-- 專案建置與打包設定 -->
     <build>
+        <!-- 最後打包的檔案名稱 -->
         <finalName>hello</finalName>
+
         <plugins>
+            <!-- 指定使用的 Java 編譯器版本與編碼 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.8</source> <!-- Java 語法版本 -->
+                    <target>1.8</target> <!-- 編譯出來的 bytecode 適用版本 -->
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+
+            <!-- Spring Boot 的打包與啟動插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
+                    <!-- 指定應用程式進入點 -->
                     <mainClass>org.example.ssmtest.SsmtestApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
                         <id>repackage</id>
                         <goals>
-                            <goal>repackage</goal>
+                            <goal>repackage</goal> <!-- 將應用重新包裝成可執行的 jar -->
                         </goals>
                     </execution>
                 </executions>
