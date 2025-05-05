@@ -1,6 +1,7 @@
 package org.example.ssmtest.controller;
 
 import org.example.ssmtest.repository.StudentRepository;
+import org.example.ssmtest.service.ComputeImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +21,9 @@ import java.util.Map;
 public class BaseController {
     @Resource
     StudentRepository studentRepository;
+
+    @Resource
+    ComputeImpl compute;
 
     @GetMapping("hello")
     public String hello(){
@@ -55,5 +59,28 @@ public class BaseController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(bytes);
+    }
+
+
+    @GetMapping("compute")
+    public ResponseEntity<?> compute(int a, int b, String operate){
+        try{
+            if (operate.equals("add")){
+                return ResponseEntity.ok(compute.add(a, b));
+            }
+            if (operate.equals("sub")){
+                return ResponseEntity.ok(compute.sub(a, b));
+            }
+            if (operate.equals("mul")){
+                return ResponseEntity.ok(compute.mul(a, b));
+            }
+            if (operate.equals("div")){
+                return ResponseEntity.ok(compute.div(a, b));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
     }
 }
