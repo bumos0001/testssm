@@ -45,6 +45,9 @@
 
     <resultMap id="studentFullMap" type="org.example.ssmtest.model.entity.Student">
         <id column="student_id" property="id"/>
+        <result column="student_name" property="name"/>
+        <result column="student_email" property="email"/>
+
 
         <association property="address" javaType="org.example.ssmtest.model.entity.Address">
             <id column="address_id" property="id"/>
@@ -62,7 +65,7 @@
             <!-- 映射 teacher 屬性 -->
             <association property="teacher" javaType="org.example.ssmtest.model.entity.Teacher">
                 <id column="teacher_id" property="id"/>
-                <result column="name" property="name"/>
+                <result column="teacher_name" property="name"/>
             </association>
 
 
@@ -73,8 +76,8 @@
     <select id="queryAllStudentAndCourseAndTeacher" resultMap="studentFullMap">
         SELECT
         s.id student_id,
-        s.name,
-        s.email,
+        s.name student_name,
+        s.email student_email,
 
         a.id address_id,
         a.city,
@@ -84,7 +87,7 @@
         c.name course_name,
         c.description,
         t.id teacher_id,
-        t.name
+        t.name teacher_name
 
         FROM student s
         LEFT JOIN address a ON s.id = a.student_id
