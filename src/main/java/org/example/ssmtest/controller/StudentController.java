@@ -1,58 +1,39 @@
 package org.example.ssmtest.controller;
 
-import org.example.ssmtest.model.dto.StudentDTO;
+import org.example.ssmtest.mapper.StudentMapper;
 import org.example.ssmtest.model.entity.Student;
-import org.example.ssmtest.repository.StudentRepository;
-import org.springframework.http.HttpStatus;
+import org.example.ssmtest.model.entity.Teacher;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.util.List;
 
 @RestController
-@RequestMapping("student")
+@RequestMapping("")
 public class StudentController {
-    @Resource
-    private StudentRepository studentRepository;
+    private final StudentMapper studentMapper;
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> getStudent(@PathVariable int id){
-        List<Student> studentById = studentRepository.getStudentById(id);
-        if (studentById.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(studentById);
+    public StudentController(StudentMapper studentMapper) {
+        this.studentMapper = studentMapper;
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> addStudent(@RequestBody StudentDTO studentDTO){
-        Student student = new Student();
-        student.setName(studentDTO.getName());
-
-        Student student1 = studentRepository.saveAndFlush(student);
-        return ResponseEntity.status(HttpStatus.CREATED).body(student1);
-    }
-
-    @PutMapping("{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable int id, @RequestBody StudentDTO studentDTO){
-        List<Student> studentById = studentRepository.getStudentById(id);
-        studentById.get(0).setName(studentDTO.getName());
-        Student student = studentRepository.saveAndFlush(studentById.get(0));
-        return ResponseEntity.ok(student);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteStudent(@PathVariable int id){
-        List<Student> studentById = studentRepository.getStudentById(id);
-        studentRepository.delete(studentById.get(0));
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("")
+    @GetMapping("student/all")
     public ResponseEntity<?> getAllStudent(){
-        List<Student> studentById = studentRepository.findAll();
-        return ResponseEntity.ok(studentById);
+        List<Student> students = studentMapper.queryAllStudentAndAddress();
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("teacher/all")
+    public ResponseEntity<?> getAllTeacher(){
+        List<Teacher> teachers = studentMapper.queryAllTeacherAndCourse();
+        return ResponseEntity.ok(teachers);
+    }
+
+    @GetMapping("studentAndCourseAndTeacher")
+    public ResponseEntity<?> getStudentAndCourseAndTeacher(){
+        List<Student> students = studentMapper.queryAllStudentAndCourseAndTeacher();
+        return ResponseEntity.ok(students);
     }
 }

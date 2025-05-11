@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.example.ssmtest.mapper.StudentMapper">
+
+    <resultMap id="studentAndAddressMap" type="org.example.ssmtest.model.entity.Student">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+
+        <association property="address" javaType="org.example.ssmtest.model.entity.Address">
+            <id column="id" property="id"/>
+            <result column="student_id" property="studentId"/>
+            <result column="city" property="city"/>
+            <result column="street" property="street"/>
+        </association>
+    </resultMap>
+
+    <select id="queryAllStudentAndAddress" resultMap="studentAndAddressMap">
+        select * from student s join address a on s.id = a.student_id
+    </select>
+
+    <resultMap id="teacherMap" type="org.example.ssmtest.model.entity.Teacher">
+        <id column="teacher_id" property="id"/>
+        <result column="teacher_name" property="name"/>
+
+        <collection property="courses" ofType="org.example.ssmtest.model.entity.Course">
+            <id column="course_id" property="id"/>
+            <result column="course_name" property="name"/>
+            <result column="description" property="description"/>
+            <result column="teacher_id" property="teacherId"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryAllTeacherAndCourse" resultMap="teacherMap">
+        SELECT
+            t.id AS teacher_id,
+            t.name AS teacher_name,
+            c.id AS course_id,
+            c.name AS course_name,
+            c.description,
+            c.teacher_id
+        FROM teacher t
+        LEFT JOIN course c ON t.id = c.teacher_id
+    </select>
+
+    <resultMap id="studentFullMap" type="org.example.ssmtest.model.entity.Student">
+        <id column="student_id" property="id"/>
+
+        <association property="address" javaType="org.example.ssmtest.model.entity.Address">
+            <id column="address_id" property="id"/>
+            <result column="student_id" property="studentId"/>
+            <result column="city" property="city"/>
+            <result column="street" property="street"/>
+        </association>
+
+        <collection property="courses" ofType="org.example.ssmtest.model.entity.Course">
+            <id column="course_id" property="id"/>
+            <result column="course_name" property="name"/>
+            <result column="description" property="description"/>
+            <result column="teacher_id" property="teacherId"/>
+
+            <!-- 映射 teacher 屬性 -->
+            <association property="teacher" javaType="org.example.ssmtest.model.entity.Teacher">
+                <id column="teacher_id" property="id"/>
+                <result column="name" property="name"/>
+            </association>
+
+
+        </collection>
+    </resultMap>
+
+
+    <select id="queryAllStudentAndCourseAndTeacher" resultMap="studentFullMap">
+        SELECT
+        s.id student_id,
+        s.name,
+        s.email,
+
+        a.id address_id,
+        a.city,
+        a.street,
+
+        c.id course_id,
+        c.name course_name,
+        c.description,
+        t.id teacher_id,
+        t.name
+
+        FROM student s
+        LEFT JOIN address a ON s.id = a.student_id
+        LEFT JOIN student_course sc ON s.id = sc.student_id
+        LEFT JOIN course c ON sc.course_id = c.id
+        LEFT JOIN teacher t ON c.teacher_id = t.id
+    </select>
+
+
+</mapper>

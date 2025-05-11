@@ -7,11 +7,9 @@ import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Student {
+public class Teacher {
     private int id;
     private String name;
-    private String email;
 
-    private Address address;                // 一對一
-    private List<Course> courses;          // 多對多
+    private List<Course> courses;          // 一對多
 }
