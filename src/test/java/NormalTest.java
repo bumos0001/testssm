@@ -1,17 +1,19 @@
-import org.example.ssmtest.mapper.UserMapper;
+import org.example.ssmtest.SsmtestApplication;
+import org.example.ssmtest.service.UserService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 
-@SpringBootTest
+@SpringBootTest(classes = SsmtestApplication.class)
 public class NormalTest {
     @Resource
-    private UserMapper userMapper;
+    private UserService userService;
 
     @Test
     public void test() {
-        
+
+
     }
+
 }
