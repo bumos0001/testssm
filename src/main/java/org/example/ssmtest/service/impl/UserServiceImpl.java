@@ -1,18 +1,21 @@
 package org.example.ssmtest.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.example.ssmtest.mapper.UserMapper;
 import org.example.ssmtest.model.entity.User;
 import org.example.ssmtest.service.UserService;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Resource
     private UserMapper userMapper;
 
@@ -32,5 +35,14 @@ public class UserServiceImpl implements UserService {
                 .authorities(AuthorityUtils.NO_AUTHORITIES) // 先不給權限
                 .build();
         return userDetails;
+    }
+
+    @Override
+    public boolean insertUser(User user) {
+        String loginPwd = user.getLoginPwd();
+        PasswordEncoder delegatingPasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        String encode = delegatingPasswordEncoder.encode(loginPwd);
+        user.setLoginPwd(encode);
+        return save(user);
     }
 }

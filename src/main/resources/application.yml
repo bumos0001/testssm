@@ -6,9 +6,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://35.212.162.201:3306/springsecurity_test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    url: jdbc:mysql://35.208.150.98:3306/springsecurity_test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: remoteuser
-    password: Gs5KXwy90mRKuIC
+    password: apLeXJ78wrQlMZUBNPBZ
     driver-class-name: com.mysql.cj.jdbc.Driver
   security:
     user:
