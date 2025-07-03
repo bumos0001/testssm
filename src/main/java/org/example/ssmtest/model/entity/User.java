@@ -1,18 +1,25 @@
 package org.example.ssmtest.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Data
 @TableName("user")
-public class User {
+public class User implements UserDetails {
     @TableId(type = IdType.AUTO)
     private Integer id;                     // 主鍵，自動增長
     @NotBlank(message = "帳號不能為空")
@@ -33,4 +40,42 @@ public class User {
     private LocalDateTime editTime;                 // 編輯時間
     private Integer editBy;                // 編輯人
     private LocalDateTime lastLoginTime;            // 最後登入時間
+    private Integer roleId;
+    @TableField(exist = false)
+    private List<GrantedAuthority> authorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.loginPwd;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.loginAct;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNoExpired == 1;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNoLocked == 1;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNoExpired == 1;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.accountEnabled == 1;
+    }
 }

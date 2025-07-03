@@ -5,6 +5,8 @@ import org.example.ssmtest.model.entity.User;
 import org.example.ssmtest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,8 +21,9 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("")
-    public String index(Principal principal) {
-        return principal.toString();
+    public ResponseEntity<Object> index() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok(authentication);
     }
 
     @PostMapping("user")
