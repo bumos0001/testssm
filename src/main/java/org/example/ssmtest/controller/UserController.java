@@ -1,11 +1,15 @@
 package org.example.ssmtest.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.ssmtest.model.entity.User;
 import org.example.ssmtest.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("")
@@ -15,9 +19,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("")
-    public String login() {
-
-        return "hello";
+    public String index(Principal principal) {
+        return principal.toString();
     }
 
     @PostMapping("user")

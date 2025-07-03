@@ -20,9 +20,7 @@ public class NormalTest {
     private UserMapper userMapper;
     @Test
     public void test() {
-        stringRedisTemplate.opsForValue().set("QQ","AA",5, TimeUnit.MINUTES);
-//        User user = userMapper.selectById(1);
-//        System.out.println(user);
+
 
 
     }
