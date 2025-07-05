@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         //  將權限轉成 GrantedAuthority
-        List<Permission> permissions = permissionMapper.findByRoleId(user.getRoleId());
+        List<Permission> permissions = permissionMapper.findByRoleIds(Collections.singletonList(user.getRoleId()));
 
         List<GrantedAuthority> authorities = permissions.stream()
                 .map(p -> new SimpleGrantedAuthority(p.getName()))

@@ -62,6 +62,24 @@
       outline: none;
     }
 
+    .captcha-group {
+      display: flex;
+      align-items: center;
+      gap: 10px; /* 驗證碼輸入框和圖片之間的間距 */
+      margin-bottom: 20px;
+    }
+
+    .captcha-group input {
+        flex-grow: 1; /* 讓輸入框佔據更多空間 */
+    }
+
+    .captcha-group img {
+      height: 40px; /* 驗證碼圖片高度 */
+      cursor: pointer; /* 滑鼠移到圖片上顯示可點擊 */
+      border: 1px solid #ccc; /* 圖片邊框，可選 */
+      border-radius: 4px;
+    }
+
     .login-btn {
       width: 100%;
       padding: 12px;
@@ -97,10 +115,9 @@
   </style>
 </head>
 <body>
-
   <div class="login-container">
     <h2>歡迎登入</h2>
-    <form action="http://localhost:8080/login" method="POST">
+    <form id="loginForm">
       <div class="form-group">
         <label for="username">使用者名稱</label>
         <input type="text" id="username" name="username" placeholder="請輸入帳號" required />
@@ -109,9 +126,9 @@
         <label for="password">密碼</label>
         <input type="password" id="password" name="password" placeholder="請輸入密碼" required />
       </div>
-      <div class="form-group">
-        <label for="text">驗證碼</label>
-        <input type="text" name="captcha" required><img src="http://localhost:8080/common/captcha"/></input>
+      <div class="form-group captcha-group">
+        <label for="captcha" style="display: none;">驗證碼</label> <input type="text" id="captcha" name="captcha" placeholder="請輸入驗證碼" required />
+        <img id="captchaImg" alt="驗證碼" title="點擊刷新驗證碼" />
       </div>
       <button type="submit" class="login-btn">登入</button>
     </form>
@@ -120,5 +137,77 @@
     </div>
   </div>
 
+  <script>
+    const captchaImg = document.getElementById("captchaImg");
+    const loginForm = document.getElementById("loginForm");
+
+    // 函數：從後端獲取並顯示驗證碼圖片
+    async function fetchCaptcha() {
+      try {
+        const response = await fetch('http://localhost:8080/common/captcha');
+        if (!response.ok) {
+          throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
+        }
+        const data = await response.json();
+        // 假設後端返回的 JSON 中有 captchaImage 屬性
+        if (data.captchaImage) {
+          captchaImg.src = data.captchaImage;
+        } else {
+          console.error('API 返回的 JSON 中沒有找到 captchaImage 屬性');
+          captchaImg.src = ''; // 清空圖片源以防萬一
+        }
+      } catch (error) {
+        console.error('獲取驗證碼失敗:', error);
+        captchaImg.src = ''; // 清空圖片源
+        alert('無法載入驗證碼，請稍後再試。');
+      }
+    }
+
+    // 載入頁面時先獲取一次驗證碼
+    document.addEventListener('DOMContentLoaded', fetchCaptcha);
+
+    // 點擊驗證碼圖片時刷新
+    captchaImg.addEventListener('click', fetchCaptcha);
+
+    // 處理表單提交
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault(); // 阻止表單預設提交行為
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const captcha = document.getElementById('captcha').value;
+
+      // 在這裡發送登入請求到後端
+      try {
+        const response = await fetch('http://localhost:8080/login', { // 假設登入 API 路徑是 /authenticate
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password, captcha }) // 將資料轉換為 JSON 格式
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // 登入成功，處理 JWT token
+          console.log('登入成功！Token:', data.token);
+          // 通常會將 token 儲存到 localStorage 或 sessionStorage
+          localStorage.setItem('jwt_token', data.token);
+          alert('登入成功！');
+          // 導向其他頁面，例如：
+          // window.location.href = '/dashboard';
+        } else {
+          const errorData = await response.json();
+          console.error('登入失敗:', errorData.message);
+          alert('登入失敗: ' + (errorData.message || '請檢查使用者名稱、密碼或驗證碼。'));
+          fetchCaptcha(); // 登入失敗時刷新驗證碼
+        }
+      } catch (error) {
+        console.error('登入請求出錯:', error);
+        alert('登入過程中發生錯誤，請稍後再試。');
+        fetchCaptcha(); // 發生錯誤時刷新驗證碼
+      }
+    });
+  </script>
 </body>
 </html>
