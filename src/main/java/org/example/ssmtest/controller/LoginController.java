@@ -38,7 +38,7 @@ public class LoginController {
             map.put("token", s);
             // 回傳 JWT 給前端
             return ResponseEntity.ok(map);
-        }catch (BadCredentialsException e) {
+        }catch (Exception e) {
             return ResponseEntity.status(500).body("帳號密碼錯誤");
         }
 

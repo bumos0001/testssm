@@ -127,7 +127,8 @@
         <input type="password" id="password" name="password" placeholder="請輸入密碼" required />
       </div>
       <div class="form-group captcha-group">
-        <label for="captcha" style="display: none;">驗證碼</label> <input type="text" id="captcha" name="captcha" placeholder="請輸入驗證碼" required />
+        <label for="captcha" style="display: none;">驗證碼</label>
+        <input type="text" id="captcha" name="captcha" placeholder="請輸入驗證碼" required />
         <img id="captchaImg" alt="驗證碼" title="點擊刷新驗證碼" />
       </div>
       <button type="submit" class="login-btn">登入</button>
@@ -140,8 +141,9 @@
   <script>
     const captchaImg = document.getElementById("captchaImg");
     const loginForm = document.getElementById("loginForm");
+    let captchaKey = ''; // 新增一個變數來儲存驗證碼的 key
 
-    // 函數：從後端獲取並顯示驗證碼圖片
+    // 函數：從後端獲取並顯示驗證碼圖片和 key
     async function fetchCaptcha() {
       try {
         const response = await fetch('http://localhost:8080/common/captcha');
@@ -149,16 +151,20 @@
           throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
         }
         const data = await response.json();
-        // 假設後端返回的 JSON 中有 captchaImage 屬性
-        if (data.captchaImage) {
+        // 假設後端返回的 JSON 中有 captchaImage 和 key 屬性
+        if (data.captchaImage && data.key) {
           captchaImg.src = data.captchaImage;
+          captchaKey = data.key; // 儲存獲取到的 key
+          console.log('驗證碼 key:', captchaKey);
         } else {
-          console.error('API 返回的 JSON 中沒有找到 captchaImage 屬性');
+          console.error('API 返回的 JSON 中沒有找到 captchaImage 或 key 屬性');
           captchaImg.src = ''; // 清空圖片源以防萬一
+          captchaKey = ''; // 清空 key
         }
       } catch (error) {
         console.error('獲取驗證碼失敗:', error);
         captchaImg.src = ''; // 清空圖片源
+        captchaKey = ''; // 清空 key
         alert('無法載入驗證碼，請稍後再試。');
       }
     }
@@ -175,16 +181,22 @@
 
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-      const captcha = document.getElementById('captcha').value;
+      const code = document.getElementById('captcha').value; // 將驗證碼輸入框的值命名為 code
+
+      if (!captchaKey) {
+          alert('驗證碼資訊不完整，請刷新頁面重試。');
+          return;
+      }
 
       // 在這裡發送登入請求到後端
       try {
-        const response = await fetch('http://localhost:8080/login', { // 假設登入 API 路徑是 /authenticate
+        const response = await fetch('http://localhost:8080/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ username, password, captcha }) // 將資料轉換為 JSON 格式
+          // 調整 body 以包含 username, password, key, code
+          body: JSON.stringify({ username, password, key: captchaKey, code })
         });
 
         if (response.ok) {
