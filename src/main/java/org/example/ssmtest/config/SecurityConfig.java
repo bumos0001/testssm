@@ -1,6 +1,5 @@
 package org.example.ssmtest.config;
 
-import org.example.ssmtest.filter.CaptchaFilter;
 import org.example.ssmtest.filter.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,9 +23,6 @@ import javax.annotation.Resource;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    @Resource
-    private CaptchaFilter captchaFilter;
-
     @Resource
     private JwtFilter jwtFilter;
 
@@ -54,7 +50,6 @@ public class SecurityConfig {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
